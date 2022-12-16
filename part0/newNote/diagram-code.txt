@@ -1,0 +1,19 @@
+sequenceDiagram
+Note over Browser: Save button is clicked
+Browser->>Server: HTTP POST Request URL: https://studies.cs.helsinki.fi/exampleapp/new_note
+Note over Server: New note is processed and added
+Server -->> Browser: HTTP status code 302. Location: /notes 
+
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/notes
+Server -->> Browser: HTML code
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/main.css
+Server -->> Browser: main.css
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/main.js
+Server -->> Browser: main.js
+
+Note over Browser: Javascript code is executed that loads JSON data from server
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/data.json
+Server -->> Browser: [{"content":"hi","date":"2022-12-15T17:09:40.299Z"}, ...]
+
+
+# Made with mermaid.live

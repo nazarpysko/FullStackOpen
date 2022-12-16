@@ -1,0 +1,11 @@
+sequenceDiagram
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/spa
+Server -->> Browser: HTML code
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/main.js
+Server -->> Browser: spa.js
+
+Note over Browser: Javascript code is executed that loads JSON data from server
+Browser->>Server: HTTP GET Request URL: https://studies.cs.helsinki.fi/exampleapp/data.json
+Server -->> Browser: [{"content":"hi","date":"2022-12-15T17:09:40.299Z"}, ...]
+
+# Made with mermaid.live
