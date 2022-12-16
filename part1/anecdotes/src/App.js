@@ -1,5 +1,14 @@
 import { useState } from 'react'
 
+const Anecdote = ({text, votes}) => {
+  return (
+    <div>
+      <p>{text}</p>
+      <p>has {votes} {votes === 1 ? "vote" : "votes"}</p>
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -10,15 +19,21 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.'
   ]
-   
+
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
 
-
+  const voteAnecdote = (anecdoteIndex) => {
+    const newVotes = {...votes}
+    newVotes[anecdoteIndex] += 1
+    setVotes(newVotes)
+  }
 
   return (
     <div>
-      <p> {anecdotes[selected]} </p>
-      <button onClick={() => setSelected(Math.floor(Math.random() * (anecdotes.length - 1)))}> Click me</button>
+      <Anecdote text={anecdotes[selected]} votes={votes[selected]}/>
+      <button onClick={() => voteAnecdote(selected)}>vote</button>
+      <button onClick={() => setSelected(Math.floor(Math.random() * (anecdotes.length)))}> next anecdote</button>
     </div>
   )
 }
