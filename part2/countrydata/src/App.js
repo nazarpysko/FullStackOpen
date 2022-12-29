@@ -35,9 +35,34 @@ const Country = ({ country }) => (
     <ul>
       {Object.values(country.languages).map(lan => <li key={lan}>{lan}</li>)}
     </ul>
-    <img src={country.flags.svg} alt='flag' style={{ width: "30%", height: "30%" }} />
+    <img src={country.flags.svg} alt='flag' style={{ width: "20%", height: "20%" }} />
+
+    <Weather city={country.capital[0]} latlng={country.capitalInfo.latlng} />
   </>
 )
+
+const Weather = ({ city, latlng }) => {
+  const [weather, setWeather] = useState('')
+
+  useEffect(() => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${latlng[0]}&lon=${latlng[1]}&appid=${process.env.REACT_APP_WEATHER_API_KEY}&units=metric`)
+      .then(response => {setWeather(response.data)})
+  }, [latlng])
+
+  if (weather === '') {
+    return 
+  }
+
+  return (
+    <>
+      <h1>{ city }</h1>
+      <p> temperature {weather.main.temp} Celsius</p>
+      <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="weather icon" />
+      <p>wind {weather.wind.speed} m/s</p>
+    </>
+  )
+}
 
 const App = () => {
   const [countries, setCountries] = useState([])
