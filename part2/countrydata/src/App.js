@@ -7,7 +7,7 @@ const Filter = ({ filterName, handleFilter }) => (
   </div>
 )
 
-const Info = ({ countries }) => {
+const Info = ({ countries, handleClick }) => {
   const nCountries = countries.length
   if (nCountries === 0) {
     return <p> No matches found </p>
@@ -16,7 +16,9 @@ const Info = ({ countries }) => {
   } else if (nCountries > 1) {
     return (
       countries.map(country => 
-        <p key={country.name.common}> {country.name.common} </p>
+        <div key={country.name.common}>
+          <p> {country.name.common} </p> <button onClick={handleClick} value={country.name.common}> show </button>
+        </div>
       )
     )
   } 
@@ -43,6 +45,12 @@ const App = () => {
   const handleFilter = (event) => {
     setFilterName(event.target.value)
   }
+
+  const handleClick = (event) => {
+    event.preventDefault()
+
+    setFilterName(event.target.value)
+  }
   
   useEffect(() => {
     axios
@@ -55,7 +63,7 @@ const App = () => {
   return (
     <div>
       <Filter filterName={filterName} handleFilter={handleFilter}/>
-      <Info countries={countriesToShow} />
+      <Info countries={countriesToShow} handleClick={handleClick} />
     </div>
   )
 }
