@@ -16,8 +16,8 @@ const Info = ({ countries, handleClick }) => {
   } else if (nCountries > 1) {
     return (
       countries.map(country => 
-        <div key={country.name.common}>
-          <p> {country.name.common} </p> <button onClick={handleClick} value={country.name.common}> show </button>
+        <div key={country.name.common} style={{ display: "flex"}}>
+          <p  style={{ margin: "0" }}> {country.name.common} </p> <button onClick={handleClick} value={country.name.common} style={{ marginRight: "auto"}}> show </button>
         </div>
       )
     )
