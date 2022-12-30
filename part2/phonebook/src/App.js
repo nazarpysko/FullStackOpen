@@ -33,24 +33,34 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [filterName, setNewFilterName] = useState('')
 
+
+  const resetFormInput = () => {
+    setNewName('')
+    setNewPhone('')
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
-    const newPerson = {
-      name: newName,
-      number: newPhone
-    }
+    const personToChange = persons.find(p => p.name === newName)
 
-    if (persons.filter(person => person.name === newName).length > 0) {
-      alert(`${newName} is already added to phonebook`)
-      return
+    if (typeof personToChange !== 'undefined') {
+      const ok = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      if (ok) {
+        phonebooksService.update({...personToChange, number: newPhone})
+        .then(personUpdated => {
+          setPersons(persons.map(p => p.id === personToChange.id ? personUpdated : p))
+        })
+      }
+
+      resetFormInput()
+      return 
     } 
 
-    phonebooksService.create(newPerson)
+    phonebooksService.create({name: newName, number: newPhone})
       .then(responseData => {
         setPersons(persons.concat(responseData))
-        setNewName('')
-        setNewPhone('')
+        resetFormInput()
       })
   }
 
