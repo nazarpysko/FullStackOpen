@@ -21,7 +21,7 @@ const PersonForm = ({addPerson, newName, handleNameChange, newPhone, handlePhone
 
 const Persons = ({persons}) => (
   persons.map(person => 
-    <p key={person.id}> {person.name} {person.phone}</p>
+    <p key={person.id}> {person.name} {person.number}</p>
   )
 )
 
@@ -36,14 +36,23 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
 
+    const newPerson = {
+      name: newName,
+      number: newPhone
+    }
+
     if (persons.filter(person => person.name === newName).length > 0) {
       alert(`${newName} is already added to phonebook`)
       return
     } 
 
-    setPersons(persons.concat({name: newName, phone: newPhone}))
-    setNewName('')
-    setNewPhone('')
+    axios
+      .post(serverAddress, newPerson)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewPhone('')
+      })
   }
 
   const handleNameChange = (event) => {
