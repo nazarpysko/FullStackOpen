@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import phonebooksService from './services/phonebooks'
 
 const Filter = ({filterName, handleFilter}) => (
   <div>
@@ -26,8 +26,6 @@ const Persons = ({persons}) => (
 )
 
 const App = () => {
-  const serverAddress = 'http://localhost:3001/persons'
-
   const [persons, setPersons] = useState([])  
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
@@ -46,10 +44,9 @@ const App = () => {
       return
     } 
 
-    axios
-      .post(serverAddress, newPerson)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+    phonebooksService.create(newPerson)
+      .then(responseData => {
+        setPersons(persons.concat(responseData))
         setNewName('')
         setNewPhone('')
       })
@@ -68,9 +65,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios
-      .get(serverAddress)
-      .then(response => setPersons(response.data))
+    phonebooksService.getAll()
+      .then(personsData => setPersons(personsData))
   }, [])
 
   const personsToShow = filterName === '' ? persons : persons.filter(person => person.name.toLowerCase().includes(filterName.toLowerCase()))
