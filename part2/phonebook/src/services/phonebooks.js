@@ -15,4 +15,9 @@ const create = newPerson => {
     return getResponseData(promise)
 }
 
-export default { getAll, create }
+const deletePerson = personId => {
+    const promise = axios.delete(`${baseURL}/${personId}`)
+    return getResponseData(promise)
+} 
+
+export default { getAll, create, deletePerson }

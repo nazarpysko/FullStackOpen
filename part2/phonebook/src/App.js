@@ -13,15 +13,17 @@ const PersonForm = ({addPerson, newName, handleNameChange, newPhone, handlePhone
       name: <input value={newName} onChange={handleNameChange} />
     </div>
     <div>
-      number: <input value={newPhone} onChange={handlePhoneChange} />
+      number: <input value={newPhone} onChange={handlePhoneChange} /> 
     </div>
     <div><button type="submit">add</button></div>
   </form>    
 )
 
-const Persons = ({persons}) => (
+const Persons = ({ persons, deletePerson }) => (
   persons.map(person => 
-    <p key={person.id}> {person.name} {person.number}</p>
+    <div key={person.id}>
+      <p style={{ display: 'inline-block' }}> {person.name} {person.number}</p> <button onClick={() => deletePerson(person)}> delete </button>
+    </div>
   )
 )
 
@@ -50,6 +52,17 @@ const App = () => {
         setNewName('')
         setNewPhone('')
       })
+  }
+
+  const deletePerson = (personToDelete) => {
+    const cancelClicked = !window.confirm(`Delete ${personToDelete.name}?`)
+    
+    if (cancelClicked) {
+      return
+    }
+
+    phonebooksService.deletePerson(personToDelete.id)
+      .then(() => setPersons(persons.filter(p => p.id !== personToDelete.id)))
   }
 
   const handleNameChange = (event) => {
@@ -83,7 +96,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deletePerson={deletePerson} />
     </div>
   )
 }
