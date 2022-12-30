@@ -28,13 +28,16 @@ const Persons = ({ persons, deletePerson }) => (
 )
 
 const Notification = ({ msg }) => {
-  const notificationStyle = {
-    border: '2px solid green',
-    color: 'green'
-  }
+  let notificationStyle = {}
 
   if (msg === null) {
     return null
+  } else if (msg.includes('removed')) {
+    notificationStyle.color = 'red'
+    notificationStyle.border = '2px solid red'
+  } else {
+    notificationStyle.color = 'green'
+    notificationStyle.border = '2px solid green'
   }
 
   return <h1 style={notificationStyle}> {msg} </h1>
@@ -53,6 +56,11 @@ const App = () => {
     setNewPhone('')
   }
 
+  const showNotification = msg => {
+    setNotificationMsg(msg)
+    setTimeout(() => setNotificationMsg(null), 5000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -66,19 +74,17 @@ const App = () => {
           setPersons(persons.map(p => p.id === personToChange.id ? personUpdated : p))
         })
       }
-
+      
+      showNotification(`Updated sucessfully: ${newName}`)
       resetFormInput()
-      setNotificationMsg(`Updated sucessfully: ${newName}`)
-      setTimeout(() => setNotificationMsg(null), 5000)
       return 
     } 
 
     phonebooksService.create({name: newName, number: newPhone})
       .then(responseData => {
         setPersons(persons.concat(responseData))
+        showNotification(`Created sucessfully: ${newName}`)
         resetFormInput()
-        setNotificationMsg(`Created sucessfully: ${newName}`)
-        setTimeout(() => setNotificationMsg(null), 5000)
       })
   }
 
@@ -91,6 +97,9 @@ const App = () => {
 
     phonebooksService.deletePerson(personToDelete.id)
       .then(() => setPersons(persons.filter(p => p.id !== personToDelete.id)))
+      .catch(error => {
+        showNotification(`Information of ${personToDelete.name} has already been removed from server`)
+      })
   }
 
   const handleNameChange = (event) => {
