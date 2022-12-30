@@ -27,11 +27,25 @@ const Persons = ({ persons, deletePerson }) => (
   )
 )
 
+const Notification = ({ msg }) => {
+  const notificationStyle = {
+    border: '2px solid green',
+    color: 'green'
+  }
+
+  if (msg === null) {
+    return null
+  }
+
+  return <h1 style={notificationStyle}> {msg} </h1>
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])  
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filterName, setNewFilterName] = useState('')
+  const [notificationMsg, setNotificationMsg] = useState(null)
 
 
   const resetFormInput = () => {
@@ -54,6 +68,8 @@ const App = () => {
       }
 
       resetFormInput()
+      setNotificationMsg(`Updated sucessfully: ${newName}`)
+      setTimeout(() => setNotificationMsg(null), 5000)
       return 
     } 
 
@@ -61,6 +77,8 @@ const App = () => {
       .then(responseData => {
         setPersons(persons.concat(responseData))
         resetFormInput()
+        setNotificationMsg(`Created sucessfully: ${newName}`)
+        setTimeout(() => setNotificationMsg(null), 5000)
       })
   }
 
@@ -97,6 +115,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification msg={notificationMsg}/>
 
       <Filter filterName={filterName} handleFilter={handleFilter} />
   
