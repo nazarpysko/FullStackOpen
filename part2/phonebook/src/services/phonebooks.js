@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL = 'http://localhost:3001/api/persons'
+const baseURL = '/api/persons' // Address for build
 // const baseURL = 'http://localhost:3001/persons'
 
 const getResponseData = (promise) => {
