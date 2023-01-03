@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
     { 
       "id": 1,
@@ -53,6 +55,23 @@ app.get('/info', (request, response) => {
         <p>${new Date()}</p>
     `)
     
+})
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+    console.log(body)
+    
+    if (!body) {
+        return response.status(400).json({
+            error: 'content missing'
+        })
+    }
+
+    const newPerson = {name: body.name, number: body.number}
+    newPerson.id = Math.floor(Math.random() * 1000)
+
+    persons = persons.concat(newPerson)
+    response.json(newPerson)
 })
 
 const PORT = 3001
