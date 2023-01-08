@@ -6,11 +6,6 @@ const express = require('express')
 const cors = require('cors')
 const Person = require('./models/person')
 
-// const morgan = require('morgan')
-// const express = require('express')
-// const cors = require('cors')
-// const Person = require('./models/person')
-
 const app = express()
 app.use(express.json())
 app.use(cors())
@@ -52,7 +47,7 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(person => person.id === id)
-    
+
     if (person) {
         response.json(person)
     } else {
@@ -73,7 +68,6 @@ app.get('/info', (request, response) => {
         <p> Phonebook has info for ${persons.length} people </p>
         <p>${new Date()}</p>
     `)
-    
 })
 
 app.post('/api/persons', (request, response) => {
@@ -83,17 +77,24 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({
             error: 'body content missing'
         })
-    } else if (persons.find(person => person.name === body.name)) { 
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
+    } 
+    
+    // else if (persons.find(person => person.name === body.name)) { 
+    //     return response.status(400).json({
+    //         error: 'name must be unique'
+    //     })
+    // }
 
-    const newPerson = {name: body.name, number: body.number}
-    newPerson.id = Math.floor(Math.random() * 1000)
+    // const newPerson = {name: body.name, number: body.number}
+    // newPerson.id = Math.floor(Math.random() * 1000)
 
-    persons = persons.concat(newPerson)
-    response.json(newPerson)
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+    person.save().then(savedPerson => 
+        response.json(savedPerson)    
+    )
 })
 
 const PORT = process.env.PORT || 3001
