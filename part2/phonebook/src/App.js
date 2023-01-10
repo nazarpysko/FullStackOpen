@@ -32,7 +32,7 @@ const Notification = ({ msg }) => {
 
   if (msg === null) {
     return null
-  } else if (msg.includes('removed')) {
+  } else if (msg.includes('removed') || msg.includes('failed')) {
     notificationStyle.color = 'red'
     notificationStyle.border = '2px solid red'
   } else {
@@ -58,7 +58,7 @@ const App = () => {
 
   const showNotification = msg => {
     setNotificationMsg(msg)
-    setTimeout(() => setNotificationMsg(null), 5000)
+    setTimeout(() => setNotificationMsg(null), 3000)
   }
 
   const addPerson = (event) => {
@@ -84,6 +84,11 @@ const App = () => {
       .then(responseData => {
         setPersons(persons.concat(responseData))
         showNotification(`Created sucessfully: ${newName}`)
+        resetFormInput()
+      })
+      .catch(error => {
+        console.log(`${error} y ${error.response.data.error}`);
+        showNotification(error.response.data.error)
         resetFormInput()
       })
   }
