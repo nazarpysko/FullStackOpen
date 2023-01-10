@@ -73,9 +73,10 @@ const App = () => {
         .then(personUpdated => {
           setPersons(persons.map(p => p.id === personToChange.id ? personUpdated : p))
         })
+
+        showNotification(`Updated sucessfully: ${newName}`)
       }
       
-      showNotification(`Updated sucessfully: ${newName}`)
       resetFormInput()
       return 
     } 
