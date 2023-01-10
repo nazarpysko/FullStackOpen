@@ -39,113 +39,112 @@ app.use(express.static('build'))
 // ]
 
 app.get('/api/persons', (request, response) => {
-    Person.find({}).then(persons => 
-        response.json(persons)
-    )
+  Person.find({}).then(persons => 
+    response.json(persons)
+  )
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-    const id = Number(request.params.id)
+  const id = Number(request.params.id)
 
-    Person.findById(request.params.id)
-        .then(person => {
-            if (person) {
-                response.json(person)
-            } else {
-                response.statusMessage = `Not found any person with id ${id}`
-                response.status(404).end()        
-            }
-        })
-        .catch(error => next(error))
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.statusMessage = `Not found any person with id ${id}`
+        response.status(404).end()        
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-    const id = Number()
-    Person.findByIdAndRemove(request.params.id)
-        .then(result => {
-            if (result) {
-                response.status(204).end()
-            } else {
-                response.status(404).end()
-            }
-        })
-        .catch(error => next(error))
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      if (result) {
+        response.status(204).end()
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response) => {
-    Person.countDocuments({}, function(err, count) {
-        response.send(`
-            <p> Phonebook has info for ${count} people </p>
-            <p>${new Date()}</p>
-        `)
-    });
+  Person.countDocuments({}, function(err, count) {
+    response.send(`
+      <p> Phonebook has info for ${count} people </p>
+      <p>${new Date()}</p>
+    `)
+  })
 })
 
 app.post('/api/persons', (request, response, next) => {
-    const body = request.body
+  const body = request.body
     
-    if (!body || !body.name || !body.number) {
-        return response.status(400).json({
-            error: 'body content missing'
-        })
-    }
-
-    Person.find({ name: body.name }).then(persons => {
-        if (persons.length !== 0) {
-            return response.status(400).json({
-                error: 'name must be unique'
-            })
-        }  
+  if (!body || !body.name || !body.number) {
+    return response.status(400).json({
+      error: 'body content missing'
     })
+  }
 
-    const person = new Person({
-        name: body.name,
-        number: body.number
-    })
-    
-    person.save()
-        .then(savedPerson => response.json(savedPerson))
-        .catch(error => next(error))
+  Person.find({ name: body.name }).then(persons => {
+    if (persons.length !== 0) {
+      return response.status(400).json({
+        error: 'name must be unique'
+      })
+    }  
+  })
+
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
+  
+  person.save()
+    .then(savedPerson => response.json(savedPerson))
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    const body = request.body
+  const body = request.body
 
-    if (!body || !body.name || !body.number) {
-        return response.status(400).json({
-            error: 'body content missing'
-        })
-    }
+  if (!body || !body.name || !body.number) {
+    return response.status(400).json({
+      error: 'body content missing'
+    })
+  }
 
-    const person = {
-        name: body.name,
-        number: body.number
-    }
+  const person = {
+    name: body.name,
+    number: body.number
+  }
 
-    Person.findByIdAndUpdate(
-        request.params.id, 
-        person, 
-        { new: true, runValidators: true, context: 'query' }
-    )
-        .then(updatedPerson => response.json(updatedPerson)) 
-        .catch(error => next(error))
+  Person.findByIdAndUpdate(
+    request.params.id, 
+    person, 
+    { new: true, runValidators: true, context: 'query' }
+  )
+    .then(updatedPerson => response.json(updatedPerson)) 
+    .catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {
-    console.log(error.message)
+  console.log(error.message)
 
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformated id' })
-    } else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })
-    }
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformed id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
 
-    next(error)
+  next(error)
 }
 
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-    console.log(`Server running at port ${PORT}`);
+  console.log(`Server running at port ${PORT}`)
 })
