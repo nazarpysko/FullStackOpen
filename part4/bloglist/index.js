@@ -1,10 +1,13 @@
 import { PORT, MONGODB_URI } from './utils/config.js'
+import logger from './utils/logger.js'
+
 import http from 'http'
-import express from 'express'
 import cors from 'cors'
+
 import mongoose from 'mongoose'
 mongoose.set('strictQuery', false)
 
+import express from 'express'
 const app = express()
 
 const blogSchema = new mongoose.Schema({
@@ -40,5 +43,5 @@ app.post('/api/blogs', (request, response) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  logger.info(`Server running on port ${PORT}`)
 })
