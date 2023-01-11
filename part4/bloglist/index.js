@@ -1,24 +1,10 @@
-import { PORT, MONGODB_URI } from './utils/config.js'
-import logger from './utils/logger.js'
-
+import { PORT } from './utils/config.js'
 import http from 'http'
-import cors from 'cors'
+import logger from './utils/logger.js'
+import app from './app.js'
 
-import mongoose from 'mongoose'
+const server = http.createServer(app)
 
-import blogsRouter from './controllers/blogs.js'
-
-import express from 'express'
-const app = express()
-
-mongoose.connect(MONGODB_URI)
-    .then(result => logger.info('connected successfully to MongoDB'))
-    .catch(err => logger.error('failed to connect to MongoDB', err.message))
-
-app.use(cors())
-app.use(express.json())
-app.use('/api/blogs', blogsRouter)
-
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`)
+server.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`)
 })
