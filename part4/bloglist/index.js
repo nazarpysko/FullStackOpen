@@ -5,21 +5,14 @@ import http from 'http'
 import cors from 'cors'
 
 import mongoose from 'mongoose'
-mongoose.set('strictQuery', false)
+import Blog from './models/blog.js'
 
 import express from 'express'
 const app = express()
 
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
 mongoose.connect(MONGODB_URI)
+    .then(result => logger.info('connected successfully to MongoDB'))
+    .catch(err => logger.error('failed to connect to MongoDB', err.message))
 
 app.use(cors())
 app.use(express.json())
