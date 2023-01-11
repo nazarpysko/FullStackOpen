@@ -1,4 +1,4 @@
-import { dummy, favoriteBlog, totalLikes } from "../utils/list_helper.js";
+import { dummy, favoriteBlog, totalLikes, mostBlogs } from "../utils/list_helper.js";
 
 const emptyBlogsList = []
 
@@ -117,6 +117,35 @@ describe('favorite blog', () => {
             title: "Canonical string reduction",
             author: "Edsger W. Dijkstra",
             likes: 12,
+        })
+    })
+})
+
+describe('most blogs', () => {
+    test('empty blog list', () => {
+        const result = mostBlogs(emptyBlogsList)
+
+        expect(result).toEqual({
+            author: '',
+            blogs: 0
+        })
+    })
+
+    test('one blog list', () => {
+        const result = mostBlogs(oneBlogList)
+
+        expect(result).toEqual({
+            author: 'Robert C. Martin',
+            blogs: 1
+        })
+    })
+
+    test('many blog list', () => {
+        const result = mostBlogs(manyBlogList)
+
+        expect(result).toEqual({
+            author: 'Robert C. Martin',
+            blogs: 3
         })
     })
 })
