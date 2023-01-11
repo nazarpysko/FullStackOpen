@@ -39,4 +39,18 @@ const mostBlogs = (blogs) => {
         .reduce((max, [author, blogs]) => (blogs > max.blogs ? {author: author, blogs: blogs} : max), {author: '', blogs: 0})
 } 
 
-export { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = (blogs) => {
+    let authorsLikesCount = {}
+
+    blogs.forEach(blog => {
+        if (blog.author in authorsLikesCount) {
+            authorsLikesCount[blog.author] += blog.likes
+        } else {
+            authorsLikesCount[blog.author] = blog.likes
+        }
+    })
+
+    return Object.entries(authorsLikesCount)
+        .reduce((max, [author, likes]) => (likes > max.likes ? {author: author, likes: likes} : max), {author: '', likes: 0})
+}
+export { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }

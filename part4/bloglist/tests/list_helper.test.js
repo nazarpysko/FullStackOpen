@@ -1,4 +1,4 @@
-import { dummy, favoriteBlog, totalLikes, mostBlogs } from "../utils/list_helper.js";
+import { dummy, favoriteBlog, totalLikes, mostBlogs, mostLikes } from "../utils/list_helper.js";
 
 const emptyBlogsList = []
 
@@ -148,4 +148,33 @@ describe('most blogs', () => {
             blogs: 3
         })
     })
+})
+
+describe('most likes', () => {
+  test('empty list', () => {
+    const result = mostLikes(emptyBlogsList)
+
+    expect(result).toEqual({
+        author: '',
+        likes: 0
+    })
+  })
+  
+  test('one blog list', () => {
+    const result = mostLikes(oneBlogList)
+
+    expect(result).toEqual({
+        author: 'Robert C. Martin',
+        likes: 42
+    })
+  })  
+
+  test('many blogs list', () => {
+    const result = mostLikes(manyBlogList)
+
+    expect(result).toEqual({
+        author: 'Edsger W. Dijkstra',
+        likes: 17
+    })
+  })  
 })
