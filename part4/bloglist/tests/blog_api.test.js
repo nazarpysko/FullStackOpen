@@ -107,14 +107,23 @@ describe('when deleting a blog', () => {
         expect((await blogsInDb())).not.toContainEqual(firstBlog)
     })
 
-    test('if id is not found, 404 status code is returned', async () => {
+    test('if a valid id is not found, 404 status code is returned', async () => {
         await api
             .delete('/api/blogs/63be8321b5c72b1998deb2f7')
             .expect(404)
     })
 
     test('if malformed id is passed, error is returned', async () => {
-        
+        const malformedId = 'abc123'
+        await api
+            .delete('/api/blogs/' + malformedId)
+            .expect(400)
+    })
+
+    test('no id is passed', async () => {
+        await api
+            .delete('/api/blogs/')
+            .expect(404)
     })
 })
 

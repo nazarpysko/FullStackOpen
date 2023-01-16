@@ -1,6 +1,6 @@
+import { isValidObjectId } from 'mongoose'
 import Blog from '../models/blog.js'
 import express from 'express'
-import logger from '../utils/logger.js'
 let blogsRouter = express.Router()
 
 blogsRouter.get('/', async (request, response) => {
@@ -11,7 +11,9 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     const body = request.body
     if (!body.title || !body.url) {
-        return response.status(400).end()    
+        return response.status(400).json({
+            error: 'body content missing'
+          })
     }
     
     body.likes = body.likes ?? 0
@@ -22,6 +24,16 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
+    if (!request.params.id) {
+        return response.status(400).json({
+            error: 'id missing'
+        })
+    } else if (!isValidObjectId(request.params.id)) {
+        return response.status(400).json({
+            error: 'malformed id'
+        })
+    }
+
     const result = await Blog.findByIdAndRemove(request.params.id)
     if (result) {
         response.status(204).end()
