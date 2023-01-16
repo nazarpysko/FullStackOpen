@@ -2,22 +2,16 @@ import Blog from '../models/blog.js'
 import express from 'express'
 let blogsRouter = express.Router()
 
-blogsRouter.get('/', (request, response, next) => {
-    Blog
-        .find({})
-        .then(blogs => {
-            response.json(blogs)
-        })
+blogsRouter.get('/', async (request, response) => {
+    const blogsFound = await Blog.find({})
+    response.json(blogsFound)
 })
 
-blogsRouter.post('/', (request, response, next) => {
+blogsRouter.post('/', async (request, response) => {
     const blog = new Blog(request.body)
-
-    blog
-        .save()
-        .then(result => {
-            response.status(201).json(result)
-        })
+    
+    const result = await blog.save()
+    response.status(201).json(result)
 })
 
 export default blogsRouter
