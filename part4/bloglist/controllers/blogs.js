@@ -1,5 +1,6 @@
 import Blog from '../models/blog.js'
 import express from 'express'
+import logger from '../utils/logger.js'
 let blogsRouter = express.Router()
 
 blogsRouter.get('/', async (request, response) => {

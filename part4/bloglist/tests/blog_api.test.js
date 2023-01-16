@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../models/blog.js'
-import { initialBlogs } from './test_helper.js'
+import { blogsInDb, initialBlogs } from './test_helper.js'
 
 const api = supertest(app)
 
@@ -33,6 +33,33 @@ test('verify id property name', async () => {
     response.body.forEach(blog => {
         expect(blog.id).toBeDefined()
     })
+})
+
+test('correct amount of blogs after creating new one', async () => {
+    const newBlog = new Blog({
+        title: 'New blog test',
+        author: 'Nazar Pysko',
+        url: 'invented url',
+        likes: 42
+    })
+
+    await api.post('/api/blogs').send(newBlog)
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(initialBlogs.length + 1)
+})
+
+test('correct content of the blog saved', async () => {
+    const newBlog = {
+        title: 'New blog test',
+        author: 'Nazar Pysko',
+        url: 'invented url',
+        likes: 42
+    }
+
+    const newBlogUploaded = (await api.post('/api/blogs').send(newBlog)).body
+
+    const response = await api.get('/api/blogs')
+    expect(response.body).toContainEqual(newBlogUploaded)
 })
 
 afterAll(() => {
