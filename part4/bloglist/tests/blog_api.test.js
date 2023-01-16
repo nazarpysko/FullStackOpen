@@ -62,6 +62,20 @@ test('correct content of the blog saved', async () => {
     expect(response.body).toContainEqual(newBlogUploaded)
 })
 
+test('if likes property is missing, set it to 0', async () => {
+    const newBlog = {
+        title: 'New blog test',
+        author: 'Nazar Pysko',
+        url: 'invented url',
+    }
+
+    const newBlogUploaded = (await api.post('/api/blogs').send(newBlog)).body
+    expect(newBlogUploaded.likes).toBeDefined()
+    
+    const response = await api.get('/api/blogs')
+    expect(response.body).toContainEqual(newBlogUploaded)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
