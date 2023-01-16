@@ -28,6 +28,13 @@ test('correct amount of notes are returned', async () => {
     expect(response.body).toHaveLength(initialBlogs.length)
 })
 
+test('verify id property name', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => {
+        expect(blog.id).toBeDefined()
+    })
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
