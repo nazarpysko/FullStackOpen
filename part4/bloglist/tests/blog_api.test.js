@@ -23,7 +23,7 @@ describe('when there is initially some blogs saved', () => {
             .expect('Content-Type', /application\/json/)
     })
     
-    test('correct amount of notes are returned', async () => {
+    test('correct amount of blogs are returned', async () => {
         const response = await api.get('/api/blogs')
     
         expect(response.body).toHaveLength(initialBlogs.length)
@@ -37,7 +37,7 @@ describe('when there is initially some blogs saved', () => {
     })
 })
 
-describe('when adding new note', () => {
+describe('when adding new blog', () => {
     test('correct amount of blogs after creating new one', async () => {
         const newBlog = {
             title: 'New blog test',
@@ -90,6 +90,32 @@ describe('when adding new note', () => {
             .send(newMalformedBlog)
             .expect(400)
     })    
+})
+
+describe('when deleting a blog', () => {
+    test('correct amount of blogs after deleting a blog', async () => {
+        const firstBlog = (await blogsInDb())[0]
+        await api.delete('/api/blogs/' + firstBlog.id)
+    
+        expect((await blogsInDb())).toHaveLength(initialBlogs.length - 1)
+    })
+
+    test('blog is not present after removing', async () => {
+        const firstBlog = (await blogsInDb())[0]
+        await api.delete('/api/blogs/' + firstBlog.id)
+    
+        expect((await blogsInDb())).not.toContainEqual(firstBlog)
+    })
+
+    test('if id is not found, 404 status code is returned', async () => {
+        await api
+            .delete('/api/blogs/63be8321b5c72b1998deb2f7')
+            .expect(404)
+    })
+
+    test('if malformed id is passed, error is returned', async () => {
+        
+    })
 })
 
 
