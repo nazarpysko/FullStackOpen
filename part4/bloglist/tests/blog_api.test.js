@@ -127,6 +127,53 @@ describe('when deleting a blog', () => {
     })
 })
 
+describe('when updating likes from a blog', () => {
+    test('blogs likes are updated', async () => {
+        const firstBlog = (await blogsInDb())[0]
+        const newLikes = 58
+        const updatedBlog = await api.put('/api/blogs/' + firstBlog.id).send({ likes: newLikes })
+
+        expect(updatedBlog.body.likes).toBe(newLikes)
+    })
+
+    test('no other blogs are updated', async () => {
+        const blogs = await blogsInDb()
+        const firstBlog = blogs[0]
+        const newLikes = 58
+        const updatedBlog = await api.put('/api/blogs/' + firstBlog.id).send({ likes: newLikes })
+        blogs[0] = updatedBlog.body
+
+        const blogsAfterUpdatingOneBlog = await blogsInDb()
+        expect(blogsAfterUpdatingOneBlog).toEqual(blogs) 
+    })
+
+    test('no id is passed', async () => {
+        await api
+            .put('/api/blogs/').send({ likes: 88 })
+            .expect(404)
+    })
+
+    test('no likes are passed', async () => {
+        await api
+            .put('/api/blogs/63be8321b5c72b1998deb2f7')
+            .expect(400)
+    })
+
+    test('non existing id is passed', async () => {
+        await api
+            .put('/api/blogs/63fe8321b5c72b1998deb2f7')
+            .send({ likes: 88 })
+            .expect(404)
+    })
+
+    test('non valid id is passed', async () => {
+        await api
+        .put('/api/blogs/abc123')
+        .send({ likes: 88 })
+        .expect(400)
+    })
+})
+
 
 afterAll(() => {
     mongoose.connection.close()

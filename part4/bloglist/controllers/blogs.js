@@ -24,11 +24,7 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-    if (!request.params.id) {
-        return response.status(400).json({
-            error: 'id missing'
-        })
-    } else if (!isValidObjectId(request.params.id)) {
+    if (!isValidObjectId(request.params.id)) {
         return response.status(400).json({
             error: 'malformed id'
         })
@@ -37,6 +33,28 @@ blogsRouter.delete('/:id', async (request, response) => {
     const result = await Blog.findByIdAndRemove(request.params.id)
     if (result) {
         response.status(204).end()
+    } else {
+        response.status(404).end()
+    }
+})
+
+blogsRouter.put('/:id', async (request, response) => {
+    if (!isValidObjectId(request.params.id)) {
+        return response.status(400).json({
+            error: 'malformed id'
+        })
+    }
+
+    const likes = Number(request.body.likes)
+    if (!likes) {
+        return response.status(400).json({
+            error: 'likes are missing'
+        })
+    }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id,{ likes: likes }, { new: true })
+    if (updatedBlog) {
+        response.json(updatedBlog)
     } else {
         response.status(404).end()
     }
