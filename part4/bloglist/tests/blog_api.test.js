@@ -76,6 +76,18 @@ test('if likes property is missing, set it to 0', async () => {
     expect(response.body).toContainEqual(newBlogUploaded)
 })
 
+test('if title or url are missing, respond with 400 status code', async () => {
+    const newMalformedBlog = {
+        author: 'Nazar Pysko',
+        url: 'invented url'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newMalformedBlog)
+        .expect(400)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
