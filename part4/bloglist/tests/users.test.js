@@ -51,9 +51,51 @@ describe('when there is initially one user in db', () => {
             password: '12345678'
         }
 
+        const error = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)       
+            
+        expect(error.body).toEqual({ error: 'username must be unique' })
+    })
+
+    test('creation fails with an invalid password length', async () => {
+        const newUser = {
+            username: 'mano',
+            name: 'Manolito',
+            password: '12'
+        }
+
+        const error = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+        
+        expect(error.body).toEqual({ error: 'password must be at least 3 characters' })
+    })
+
+    test('creation fails with invalid username length', async () => {
+        const newUser = {
+            username: 'ma',
+            name: 'Manolito',
+            password: '1234'
+        }
+
         await api
             .post('/api/users')
             .send(newUser)
-            .expect(400)        
+            .expect(400)
+    })
+
+    test('creation succeed with no name given', async () => {
+        const newUser = {
+            username: 'manolito',
+            password: '1234'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
     })
 })

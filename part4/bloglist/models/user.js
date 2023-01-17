@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 mongoose.set('strictQuery', false)
 
 const userSchema = new mongoose.Schema({
-    username: String,
+    username: {
+        type: String,
+        required: true,
+        minLength: 3
+    },
     name: String,
     passwordHash: String
 })
