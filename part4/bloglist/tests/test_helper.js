@@ -1,4 +1,6 @@
 import Blog from "../models/blog";
+import User from "../models/user";
+import bcryptjs from 'bcryptjs'
 
 const initialBlogs = [
     {
@@ -34,4 +36,21 @@ const blogsInDb = async () => {
     return blogs.map(blog => blog.toJSON())
 }
 
-export { initialBlogs, nonExistingId, blogsInDb }
+const createHash = async (password) => {
+    return await bcryptjs.hash(password, 13)
+}
+
+const initialUsers = [
+    {
+        username: 'root',
+        name: 'superuser',
+        passwordHash: createHash('easypassword123')
+    }
+]
+
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(user => user.toJSON())
+}
+
+export { initialBlogs, nonExistingId, blogsInDb, usersInDb, initialUsers }

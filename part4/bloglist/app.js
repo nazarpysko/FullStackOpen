@@ -9,6 +9,7 @@ import blogsRouter from './controllers/blogs.js'
 import logger from './utils/logger.js'
 import mongoose from 'mongoose'
 import middleware from './utils/middleware.js'
+import usersRouter from './controllers/users.js'
 
 
 logger.info('connecting to', MONGODB_URI)
@@ -21,6 +22,7 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
