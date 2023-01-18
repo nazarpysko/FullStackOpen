@@ -6,16 +6,20 @@ import { blogsInDb, initialBlogs } from './test_helper.js'
 
 const api = supertest(app)
 
-beforeEach(async () => {
-    await Blog.deleteMany({})
-
-    const blogObjects = initialBlogs.map(blog => new Blog(blog))
-    const promiseArray = blogObjects.map(blog => blog.save())
-
-    await Promise.all(promiseArray)
-})
+const resetTestSuit = () => {
+    beforeEach(async () => {
+        await Blog.deleteMany({})
+    
+        const blogObjects = initialBlogs.map(blog => new Blog(blog))
+        const promiseArray = blogObjects.map(blog => blog.save())
+    
+        await Promise.all(promiseArray)
+    })    
+}
 
 describe('when there is initially some blogs saved', () => {
+    resetTestSuit()
+
     test('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
@@ -38,6 +42,8 @@ describe('when there is initially some blogs saved', () => {
 })
 
 describe('when adding new blog', () => {
+    resetTestSuit()
+
     test('correct amount of blogs after creating new one', async () => {
         const newBlog = {
             title: 'New blog test',
@@ -60,9 +66,13 @@ describe('when adding new blog', () => {
         }
     
         const newBlogUploaded = (await api.post('/api/blogs').send(newBlog)).body
-    
-        const response = await api.get('/api/blogs')
-        expect(response.body).toContainEqual(newBlogUploaded)
+        expect(newBlogUploaded.id).toBeDefined()
+        expect(newBlogUploaded.user).toBeDefined()
+
+        delete newBlogUploaded.user
+        delete newBlogUploaded.id
+
+        expect(newBlogUploaded).toEqual(newBlog)
     })
     
     test('if likes property is missing, set it to 0', async () => {
@@ -74,9 +84,7 @@ describe('when adding new blog', () => {
     
         const newBlogUploaded = (await api.post('/api/blogs').send(newBlog)).body
         expect(newBlogUploaded.likes).toBeDefined()
-        
-        const response = await api.get('/api/blogs')
-        expect(response.body).toContainEqual(newBlogUploaded)
+        expect(newBlogUploaded.likes).toEqual(0)
     })
     
     test('if title or url are missing, respond with 400 status code', async () => {
@@ -89,10 +97,12 @@ describe('when adding new blog', () => {
             .post('/api/blogs')
             .send(newMalformedBlog)
             .expect(400)
-    })    
+    })
 })
 
 describe('when deleting a blog', () => {
+    resetTestSuit()
+    
     test('correct amount of blogs after deleting a blog', async () => {
         const firstBlog = (await blogsInDb())[0]
         await api.delete('/api/blogs/' + firstBlog.id)
@@ -128,6 +138,8 @@ describe('when deleting a blog', () => {
 })
 
 describe('when updating likes from a blog', () => {
+    resetTestSuit()
+
     test('blogs likes are updated', async () => {
         const firstBlog = (await blogsInDb())[0]
         const newLikes = 58

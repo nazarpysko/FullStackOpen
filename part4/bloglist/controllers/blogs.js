@@ -1,10 +1,11 @@
 import { isValidObjectId } from 'mongoose'
 import Blog from '../models/blog.js'
 import express from 'express'
+import User from '../models/user.js'
 let blogsRouter = express.Router()
 
 blogsRouter.get('/', async (request, response) => {
-    const blogsFound = await Blog.find({})
+    const blogsFound = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
     response.json(blogsFound)
 })
 
@@ -17,10 +18,17 @@ blogsRouter.post('/', async (request, response) => {
     }
     
     body.likes = body.likes ?? 0
-    const blog = new Blog(body)
     
-    const result = await blog.save()
-    response.status(201).json(result)
+    const user = (await User.find({}))[0]
+    body.user = user._id
+    
+    const blog = new Blog(body)
+    const savedBlog = await blog.save()
+    
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+
+    response.status(201).json(savedBlog)
 })
 
 blogsRouter.delete('/:id', async (request, response) => {

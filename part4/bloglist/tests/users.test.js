@@ -2,21 +2,26 @@ import mongoose from "mongoose";
 import supertest from "supertest";
 import app from "../app";
 import User from "../models/user";
+import Blog from "../models/blog";
 import { initialUsers, usersInDb } from "./test_helper"; 
 import bcryptjs from 'bcryptjs'
 
 const api = supertest(app)
 
-beforeEach(async () => {
-    await User.deleteMany({})
+const resetTestSuit = () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+        await Blog.deleteMany({})
 
-    const passwordHash = await bcryptjs.hash('easypassword123', 13)
-    const user = new User({username: 'root', name: 'superuser', passwordHash})
+        const passwordHash = await bcryptjs.hash('easypassword123', 13)
+        const user = new User({username: 'root', name: 'superuser', passwordHash})
 
-    await user.save()
-})
-
+        await user.save()
+    })
+}
 describe('when there is initially one user in db', () => {
+    resetTestSuit()
+
     test('get the initial user', async () => {
         const response = await api.get('/api/users').expect(200).expect('Content-Type', /application\/json/)
         expect(response.body).toHaveLength(1)
@@ -97,5 +102,47 @@ describe('when there is initially one user in db', () => {
             .post('/api/users')
             .send(newUser)
             .expect(201)
+    })
+
+    test('new blog get assigned an user and users blogs are updated after creating a blog', async () => {
+        const newBlog = {
+            title: 'New blog test',
+            author: 'Nazar Pysko',
+            url: 'invented url',
+            likes: 42
+        }
+
+        const result = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+        
+        expect(result.body.user).toBeDefined()
+
+        const user = (await User.find({}))[0]
+        expect(user.blogs).toHaveLength(1)
+    })
+
+    test('new blogs get populated with user info', async () => {
+        const newBlog = {
+            title: 'New blog test',
+            author: 'Nazar Pysko',
+            url: 'invented url',
+            likes: 42
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+        
+        const user = (await api
+            .get('/api/blogs')
+            .expect(200)).body[0].user
+            
+        expect(user.username).toBeDefined()
+        expect(user.name).toBeDefined()
+        expect(user.id).toBeDefined()
+        expect(user.passwordHash).not.toBeDefined()
     })
 })
