@@ -145,4 +145,51 @@ describe('when there is initially one user in db', () => {
         expect(user.id).toBeDefined()
         expect(user.passwordHash).not.toBeDefined()
     })
+
+    test('existing user can log in', async () => {
+        const result = await api
+            .post('/api/login')
+            .send({ username: 'root', password: 'easypassword123'})
+            .expect(200)
+        
+        expect(result.body.token).toBeDefined()
+        expect(result.body).toHaveProperty('username')
+        expect(result.body).toHaveProperty('name')
+    })
+
+    test('existing user with wrong password can not log in', async () => {
+        const result = await api
+            .post('/api/login')
+            .send({ username: 'root', password: 'wrongPassword'})
+            .expect(401)
+    })
+
+    test('non existing user can not log in', async () => {
+        const result = await api
+            .post('/api/login')
+            .send({ username: 'pedro', password: '12345678'})
+            .expect(401)
+    })
+
+    test('new user can register and log in', async () => {
+        const newUser = {
+            username: 'pedro',
+            name: 'Pedro Fernandez',
+            password: '12345678'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+        
+        const result = await api
+            .post('/api/login')
+            .send({ username: newUser.username, password: newUser.password})
+            .expect(200)
+        
+        expect(result.body.token).toBeDefined()
+        expect(result.body).toHaveProperty('username')
+        expect(result.body).toHaveProperty('name')
+    })
 })
