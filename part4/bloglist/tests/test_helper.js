@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import Blog from "../models/blog";
 import User from "../models/user";
 import bcryptjs from 'bcryptjs'
@@ -48,9 +49,20 @@ const initialUsers = [
     }
 ]
 
+const loginInitialUser = async () => {
+    const initialUser = initialUsers[0]
+    const user = await User.findOne({ username: initialUser.username })
+    const userForToken = {
+        username: initialUser.username,
+        id: user._id
+    }
+
+    return jwt.sign(userForToken, process.env.SECRET)
+}
+
 const usersInDb = async () => {
     const users = await User.find({})
     return users.map(user => user.toJSON())
 }
 
-export { initialBlogs, nonExistingId, blogsInDb, usersInDb, initialUsers }
+export { initialBlogs, nonExistingId, blogsInDb, usersInDb, initialUsers, loginInitialUser }

@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../models/blog.js'
-import { blogsInDb, initialBlogs } from './test_helper.js'
+import { blogsInDb, initialBlogs, loginInitialUser } from './test_helper.js'
 
 const api = supertest(app)
 
@@ -51,10 +51,14 @@ describe('when adding new blog', () => {
             url: 'invented url',
             likes: 42
         }
-    
-        await api.post('/api/blogs').send(newBlog)
-        const response = await api.get('/api/blogs')
-        expect(response.body).toHaveLength(initialBlogs.length + 1)
+
+        await api
+            .post('/api/blogs')
+            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .send(newBlog)
+  
+        const result = await blogsInDb() 
+        expect(result).toHaveLength(initialBlogs.length + 1)
     })
     
     test('correct content of the blog saved', async () => {
@@ -65,7 +69,12 @@ describe('when adding new blog', () => {
             likes: 42
         }
     
-        const newBlogUploaded = (await api.post('/api/blogs').send(newBlog)).body
+        const result = await api
+            .post('/api/blogs')
+            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .send(newBlog)
+        
+        const newBlogUploaded = result.body
         expect(newBlogUploaded.id).toBeDefined()
         expect(newBlogUploaded.user).toBeDefined()
 
@@ -81,8 +90,13 @@ describe('when adding new blog', () => {
             author: 'Nazar Pysko',
             url: 'invented url',
         }
-    
-        const newBlogUploaded = (await api.post('/api/blogs').send(newBlog)).body
+        
+        const result = await api
+            .post('/api/blogs')
+            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .send(newBlog)
+
+        const newBlogUploaded = result.body
         expect(newBlogUploaded.likes).toBeDefined()
         expect(newBlogUploaded.likes).toEqual(0)
     })
@@ -95,6 +109,7 @@ describe('when adding new blog', () => {
     
         await api
             .post('/api/blogs')
+            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
             .send(newMalformedBlog)
             .expect(400)
     })
