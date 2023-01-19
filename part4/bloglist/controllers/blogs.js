@@ -1,8 +1,10 @@
+import middleware from '../utils/middleware.js'
 import jwt from 'jsonwebtoken'
 import { isValidObjectId } from 'mongoose'
 import Blog from '../models/blog.js'
 import express from 'express'
 import User from '../models/user.js'
+
 let blogsRouter = express.Router()
 
 const getTokenFrom = request => {
@@ -19,7 +21,7 @@ blogsRouter.get('/', async (request, response) => {
     response.json(blogsFound)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     const body = request.body
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
@@ -49,7 +51,7 @@ blogsRouter.post('/', async (request, response) => {
     response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
     if (!isValidObjectId(request.params.id)) {
         return response.status(400).json({
             error: 'malformed id'
