@@ -3,7 +3,7 @@ import supertest from "supertest";
 import app from "../app";
 import User from "../models/user";
 import Blog from "../models/blog";
-import { initialUsers, usersInDb, loginInitialUser } from "./test_helper"; 
+import { initialUsers, usersInDb, loginAndGetJWT } from "./test_helper"; 
 import bcryptjs from 'bcryptjs'
 
 const api = supertest(app)
@@ -114,7 +114,7 @@ describe('when there is initially one user in db', () => {
 
         const result = await api
             .post('/api/blogs')
-            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .send(newBlog)
             .expect(201)
         
@@ -134,14 +134,14 @@ describe('when there is initially one user in db', () => {
 
         await api
             .post('/api/blogs')
-            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .send(newBlog)
             .expect(201)
         
         const user = (await api
             .get('/api/blogs')
             .expect(200)).body[0].user
-            
+
         expect(user.username).toBeDefined()
         expect(user.name).toBeDefined()
         expect(user.id).toBeDefined()

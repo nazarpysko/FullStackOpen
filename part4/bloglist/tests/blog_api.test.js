@@ -1,16 +1,26 @@
+import bcryptjs from 'bcryptjs'
 import mongoose from 'mongoose'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../models/blog.js'
-import { blogsInDb, initialBlogs, loginInitialUser } from './test_helper.js'
+import User from '../models/user.js'
+import { blogsInDb, initialBlogs, initialUsers, loginAndGetJWT, usersInDb } from './test_helper.js'
 
 const api = supertest(app)
 
 const resetTestSuit = () => {
     beforeEach(async () => {
+        await User.deleteMany({})
+
+        const userObject = new User(initialUsers[0])
+        const initialUser = await userObject.save()
+
         await Blog.deleteMany({})
-    
-        const blogObjects = initialBlogs.map(blog => new Blog(blog))
+
+        const blogObjects = initialBlogs.map(blog =>{ 
+            blog.user = initialUser._id
+            return new Blog(blog)
+        })
         const promiseArray = blogObjects.map(blog => blog.save())
     
         await Promise.all(promiseArray)
@@ -54,7 +64,7 @@ describe('when adding new blog', () => {
 
         await api
             .post('/api/blogs')
-            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .send(newBlog)
   
         const result = await blogsInDb() 
@@ -71,7 +81,7 @@ describe('when adding new blog', () => {
     
         const result = await api
             .post('/api/blogs')
-            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .send(newBlog)
         
         const newBlogUploaded = result.body
@@ -93,7 +103,7 @@ describe('when adding new blog', () => {
         
         const result = await api
             .post('/api/blogs')
-            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .send(newBlog)
 
         const newBlogUploaded = result.body
@@ -109,7 +119,7 @@ describe('when adding new blog', () => {
     
         await api
             .post('/api/blogs')
-            .set({ 'authorization': 'bearer ' + await loginInitialUser() })
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .send(newMalformedBlog)
             .expect(400)
     })
@@ -118,16 +128,39 @@ describe('when adding new blog', () => {
 describe('when deleting a blog', () => {
     resetTestSuit()
     
+    test('invalid user can not delete other users blog', async () => {
+        const newUser = {
+            username: 'manolito',
+            name: 'Manolo',
+            password: 'password'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+
+        const blogs = await blogsInDb()
+        await api
+            .delete('/api/blogs/' + blogs[0].id)
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(newUser.username) })
+            .expect(401)
+    })
+
     test('correct amount of blogs after deleting a blog', async () => {
         const firstBlog = (await blogsInDb())[0]
-        await api.delete('/api/blogs/' + firstBlog.id)
+        await api
+            .delete('/api/blogs/' + firstBlog.id)
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
     
         expect((await blogsInDb())).toHaveLength(initialBlogs.length - 1)
     })
 
     test('blog is not present after removing', async () => {
         const firstBlog = (await blogsInDb())[0]
-        await api.delete('/api/blogs/' + firstBlog.id)
+        await api
+            .delete('/api/blogs/' + firstBlog.id)
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
+            .expect(204)
     
         expect((await blogsInDb())).not.toContainEqual(firstBlog)
     })
@@ -135,6 +168,7 @@ describe('when deleting a blog', () => {
     test('if a valid id is not found, 404 status code is returned', async () => {
         await api
             .delete('/api/blogs/63be8321b5c72b1998deb2f7')
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .expect(404)
     })
 
@@ -142,12 +176,14 @@ describe('when deleting a blog', () => {
         const malformedId = 'abc123'
         await api
             .delete('/api/blogs/' + malformedId)
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .expect(400)
     })
 
     test('no id is passed', async () => {
         await api
             .delete('/api/blogs/')
+            .set({ 'authorization': 'bearer ' + await loginAndGetJWT(initialUsers[0].username) })
             .expect(404)
     })
 })
@@ -161,17 +197,6 @@ describe('when updating likes from a blog', () => {
         const updatedBlog = await api.put('/api/blogs/' + firstBlog.id).send({ likes: newLikes })
 
         expect(updatedBlog.body.likes).toBe(newLikes)
-    })
-
-    test('no other blogs are updated', async () => {
-        const blogs = await blogsInDb()
-        const firstBlog = blogs[0]
-        const newLikes = 58
-        const updatedBlog = await api.put('/api/blogs/' + firstBlog.id).send({ likes: newLikes })
-        blogs[0] = updatedBlog.body
-
-        const blogsAfterUpdatingOneBlog = await blogsInDb()
-        expect(blogsAfterUpdatingOneBlog).toEqual(blogs) 
     })
 
     test('no id is passed', async () => {

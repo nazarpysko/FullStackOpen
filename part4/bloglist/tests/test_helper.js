@@ -45,15 +45,14 @@ const initialUsers = [
     {
         username: 'root',
         name: 'superuser',
-        passwordHash: createHash('easypassword123')
+        passwordHash: await createHash('easypassword123')
     }
 ]
 
-const loginInitialUser = async () => {
-    const initialUser = initialUsers[0]
-    const user = await User.findOne({ username: initialUser.username })
+const loginAndGetJWT = async (username) => {
+    const user = await User.findOne({ username })
     const userForToken = {
-        username: initialUser.username,
+        username,
         id: user._id
     }
 
@@ -65,4 +64,4 @@ const usersInDb = async () => {
     return users.map(user => user.toJSON())
 }
 
-export { initialBlogs, nonExistingId, blogsInDb, usersInDb, initialUsers, loginInitialUser }
+export { initialBlogs, nonExistingId, blogsInDb, usersInDb, initialUsers, loginAndGetJWT }
