@@ -1,3 +1,4 @@
+import User from '../models/user.js';
 import logger from './logger.js';
 
 const requestLogger = (request, response, next) => {
@@ -38,9 +39,19 @@ const getTokenAndSetRequest = (request, response, next) => {
     next()
 }
 
+const userExtractor = (request, response, next) => {
+    const user = User.findById(request.token.id)
+    if (user) {
+        request.user = user
+    }
+
+    next()
+}
+
 export default {
     requestLogger,
     unknownEndpoint, 
     errorHandler,
     getTokenAndSetRequest,
+    userExtractor
 }
