@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -15,9 +15,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: ''})
-
   const [notificationMsg, setNotificationMsg] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -51,21 +51,20 @@ const App = () => {
     }
   }
 
-  const handleCreateNewBlog = async (event) => {
-    event.preventDefault()
+  const createBlog = async newBlog => {
+    blogFormRef.current.toggleVisibility()
 
     try {
+      console.log(`Sending`, newBlog);
       const newBlogAdded = await blogService.create(newBlog)
       console.log({newBlogAdded});
 
       setBlogs(blogs.concat(newBlogAdded))
-      setNewBlog({ title: '', author: '', url: ''})
       showNotification(`a new blog ${newBlogAdded.title} by ${newBlogAdded.author} added`)
     } catch (exception) {
       showNotification(`empty fields of new blog`)
     }
   }
-
   
   const showNotification = msg => {
     setNotificationMsg(msg)
@@ -114,11 +113,9 @@ const App = () => {
         
         <br/>
 
-        <Togglable buttonLabel={'new blog'}>
+        <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
           <BlogForm 
-            onSubmit={ handleCreateNewBlog }
-            onChange={ setNewBlog }
-            value={ newBlog }
+            createBlog={ createBlog }
           />
         </Togglable>
         

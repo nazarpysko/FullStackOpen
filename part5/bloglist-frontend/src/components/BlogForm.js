@@ -1,14 +1,25 @@
-const BlogForm = ({ onSubmit, onChange, value }) => {
+import { useState } from "react"
+
+const BlogForm = ({ createBlog }) => {
+    const [newBlog, setNewBlog] = useState({ title: '', author: '', url: ''})
+
+    const addBlog = event => {
+        event.preventDefault()
+        createBlog(newBlog)
+
+        setNewBlog({ title: '', author: '', url: ''})
+    }
+
     return (
         <div>
             <h2> create a new blog </h2>
-        <form onSubmit={ onSubmit }>
+        <form onSubmit={ addBlog }>
           title:
           <input
             type='text'
-            value={ value.title }
+            value={ newBlog.title }
             name='Title'
-            onChange={ ({ target }) => onChange({ ...value, title: target.value }) }
+            onChange={ ({ target }) => setNewBlog({ ...newBlog, title: target.value }) }
           />
 
           <br/>
@@ -16,9 +27,9 @@ const BlogForm = ({ onSubmit, onChange, value }) => {
           author:
           <input
             type='text'
-            value={ value.author }
+            value={ newBlog.author }
             name='Title'
-            onChange={ ({ target }) => onChange({ ...value, author: target.value }) }
+            onChange={ ({ target }) => setNewBlog({ ...newBlog, author: target.value }) }
           />
 
           <br/>
@@ -26,9 +37,9 @@ const BlogForm = ({ onSubmit, onChange, value }) => {
           url:
           <input
             type='text'
-            value={ value.url }
+            value={ newBlog.url }
             name='Title'
-            onChange={ ({ target }) => onChange({ ...value, url: target.value }) }
+            onChange={ ({ target }) => setNewBlog({ ...newBlog, url: target.value }) }
           />
 
           <br/>
