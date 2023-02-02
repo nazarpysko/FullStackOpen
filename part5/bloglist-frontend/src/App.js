@@ -55,9 +55,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
 
     try {
-      console.log(`Sending`, newBlog);
       const newBlogAdded = await blogService.create(newBlog)
-      console.log({newBlogAdded});
 
       const updatedBlogs = await blogService.getAll()
       setBlogs(updatedBlogs)
@@ -66,6 +64,11 @@ const App = () => {
     } catch (exception) {
       showNotification(`empty fields of new blog`)
     }
+  }
+
+  const updateLikes = async blogToUpdate => {
+    const updatedBlog = await blogService.addLike(blogToUpdate)
+    setBlogs(blogs.map(blog => blog.id === blogToUpdate.id ? { ...blog, likes: updatedBlog.likes } : blog)) 
   }
   
   const showNotification = msg => {
@@ -122,7 +125,7 @@ const App = () => {
         </Togglable>
         
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateLikes={ updateLikes } />
         )}
       </div>
     )

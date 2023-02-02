@@ -7,19 +7,25 @@ const setToken = newToken => {
   token = `Bearer ${newToken}`
 }
 
+const setHeaders = () => {
+ return { headers: { Authorization: token } }
+
+}
+
 const getAll = () => {
   const request = axios.get(baseUrl)
   return request.then(response => response.data)
 }
 
 const create = async newBlog => {
-  const config = {
-    headers: { Authorization: token }
-  }
+  const response = await axios.post(baseUrl, newBlog, setHeaders())
+  return response.data
+}
 
-  const response = await axios.post(baseUrl, newBlog, config)
+const addLike = async blog => {
+  const response = await axios.put(`${baseUrl}/${blog.id}`, { likes: blog.likes + 1 }, setHeaders())
   return response.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { setToken, getAll, create }
+export default { setToken, getAll, create, addLike }
