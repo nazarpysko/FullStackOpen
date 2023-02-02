@@ -59,7 +59,9 @@ const App = () => {
       const newBlogAdded = await blogService.create(newBlog)
       console.log({newBlogAdded});
 
-      setBlogs(blogs.concat(newBlogAdded))
+      const updatedBlogs = await blogService.getAll()
+      setBlogs(updatedBlogs)
+
       showNotification(`a new blog ${newBlogAdded.title} by ${newBlogAdded.author} added`)
     } catch (exception) {
       showNotification(`empty fields of new blog`)
