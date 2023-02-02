@@ -74,6 +74,11 @@ const App = () => {
     const updatedBlog = await blogService.addLike(blogToUpdate)
     sortBlogsByLikes(blogs.map(blog => blog.id === blogToUpdate.id ? { ...blog, likes: updatedBlog.likes } : blog)) 
   }
+
+  const removeBlog = async blogToRemove => {
+    await blogService.remove(blogToRemove)
+    sortBlogsByLikes(blogs.filter(blog => blog.id !== blogToRemove.id))
+  }
   
   const showNotification = msg => {
     setNotificationMsg(msg)
@@ -129,7 +134,13 @@ const App = () => {
         </Togglable>
         
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} updateLikes={ updateLikes } />
+          <Blog 
+            key={blog.id}
+            user={user} 
+            blog={blog} 
+            updateLikes={ updateLikes } 
+            removeBlog={ removeBlog }
+          />
         )}
       </div>
     )
