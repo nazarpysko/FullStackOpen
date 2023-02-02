@@ -19,9 +19,13 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const sortBlogsByLikes = blogs => {
+    setBlogs(blogs.sort((a, b) => (a.likes > b.likes ? 1 : -1)))
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      sortBlogsByLikes(blogs)
     )  
   }, [])
 
@@ -58,7 +62,7 @@ const App = () => {
       const newBlogAdded = await blogService.create(newBlog)
 
       const updatedBlogs = await blogService.getAll()
-      setBlogs(updatedBlogs)
+      sortBlogsByLikes(updatedBlogs)
 
       showNotification(`a new blog ${newBlogAdded.title} by ${newBlogAdded.author} added`)
     } catch (exception) {
@@ -68,7 +72,7 @@ const App = () => {
 
   const updateLikes = async blogToUpdate => {
     const updatedBlog = await blogService.addLike(blogToUpdate)
-    setBlogs(blogs.map(blog => blog.id === blogToUpdate.id ? { ...blog, likes: updatedBlog.likes } : blog)) 
+    sortBlogsByLikes(blogs.map(blog => blog.id === blogToUpdate.id ? { ...blog, likes: updatedBlog.likes } : blog)) 
   }
   
   const showNotification = msg => {
