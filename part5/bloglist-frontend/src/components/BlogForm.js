@@ -1,54 +1,54 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
-    const [newBlog, setNewBlog] = useState({ title: '', author: '', url: ''})
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
-    const addBlog = event => {
-        event.preventDefault()
-        createBlog(newBlog)
+  const addBlog = event => {
+    event.preventDefault()
+    createBlog(newBlog)
 
-        setNewBlog({ title: '', author: '', url: ''})
-    }
+    setNewBlog({ title: '', author: '', url: '' })
+  }
 
-    return (
-        <div>
-            <h2> create a new blog </h2>
-        <form onSubmit={ addBlog }>
+  return (
+    <div>
+      <h2> create a new blog </h2>
+      <form onSubmit={ addBlog }>
           title:
-          <input
-            type='text'
-            value={ newBlog.title }
-            name='Title'
-            onChange={ ({ target }) => setNewBlog({ ...newBlog, title: target.value }) }
-          />
+        <input
+          type='text'
+          value={ newBlog.title }
+          name='Title'
+          onChange={ ({ target }) => setNewBlog({ ...newBlog, title: target.value }) }
+        />
 
-          <br/>
+        <br/>
 
           author:
-          <input
-            type='text'
-            value={ newBlog.author }
-            name='Title'
-            onChange={ ({ target }) => setNewBlog({ ...newBlog, author: target.value }) }
-          />
+        <input
+          type='text'
+          value={ newBlog.author }
+          name='Title'
+          onChange={ ({ target }) => setNewBlog({ ...newBlog, author: target.value }) }
+        />
 
-          <br/>
+        <br/>
 
           url:
-          <input
-            type='text'
-            value={ newBlog.url }
-            name='Title'
-            onChange={ ({ target }) => setNewBlog({ ...newBlog, url: target.value }) }
-          />
+        <input
+          type='text'
+          value={ newBlog.url }
+          name='Title'
+          onChange={ ({ target }) => setNewBlog({ ...newBlog, url: target.value }) }
+        />
 
-          <br/>
+        <br/>
 
-          <button type='submit'> create </button>
-        </form>
+        <button type='submit'> create </button>
+      </form>
 
-        </div>
-    )
+    </div>
+  )
 }
 
 export default BlogForm

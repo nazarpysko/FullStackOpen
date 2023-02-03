@@ -1,5 +1,5 @@
-import axios from 'axios';
-const baseUrl = '/api/blogs';
+import axios from 'axios'
+const baseUrl = '/api/blogs'
 
 let token = null
 
@@ -8,7 +8,7 @@ const setToken = newToken => {
 }
 
 const setHeaders = () => {
- return { headers: { Authorization: token } }
+  return { headers: { Authorization: token } }
 
 }
 
@@ -32,5 +32,5 @@ const addLike = async blog => {
   return response.data
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
+// eslint-disable-next-line
 export default { setToken, getAll, create, remove, addLike }
