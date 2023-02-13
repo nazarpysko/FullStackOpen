@@ -53,3 +53,28 @@ test('Blog\'s URL and number of likes are shown when view button is clicked', as
   const buttonLabel = screen.getByText('hide')
   expect(buttonLabel).toBeDefined()
 })
+
+test('If the like button is clicked twice, the event handler the component received as props is called twice.', async () => {
+  const blog = {
+    title: 'The Go libraries that never failed us: 22 libraries you need to know',
+    author: 'Robert Laszczak',
+    url: 'https://threedots.tech/post/list-of-recommended-libraries/',
+    likes: 42,
+    user: {
+      username: 'eduardo'
+    }
+  }
+
+  const user = {
+    username: 'a'
+  }
+
+  const mockHandler = jest.fn()
+
+  const userInteraction = userEvent.setup()
+  const { container } = render(<Blog blog={blog} user={user} updateLikes={mockHandler}/>)
+  const likeButton = container.querySelector('.like')
+  await userInteraction.dblClick(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+})
