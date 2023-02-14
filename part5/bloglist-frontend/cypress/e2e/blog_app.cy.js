@@ -1,7 +1,7 @@
 describe('Blog app', function() {
   beforeEach(function() {
     // Reset the testing database
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
 
     // Create new user for testing
     const user = {
@@ -9,8 +9,8 @@ describe('Blog app', function() {
       username: 'mluukkai',
       password: 'salainen'
     }
-    cy.request('POST', 'http://localhost:3003/api/users', user)
-    cy.visit('http://localhost:3000')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    cy.visit('')
   })
 
   it('Login form is shown', function() {
@@ -53,6 +53,25 @@ describe('Blog app', function() {
 
       cy.contains('The Go libraries that never failed us: 22 libraries you need to know').should('exist')
       cy.contains('Robert Laszczak').should('exist')
+    })
+
+    it('User can like a blog', async function() {
+      const blog = {
+        title: 'The Go libraries that never failed us: 22 libraries you need to know',
+        author: 'Robert Laszczak',
+        url: 'https://threedots.tech/post/list-of-recommended-libraries/'
+      }
+
+      cy.createBlog(blog)
+
+      cy.contains('button', 'view').click()
+      cy.contains(blog.title).get('.info').as('infoInitialBlog')
+      const initialLikes = cy.get('@infoInitialBlog').contains('likes').then(likesButton => {
+        return likesButton.text().split(' ')[1]
+      })
+
+      cy.get('@infoInitialBlog').contains('button', 'like').click()
+      cy.get('@infoInitialBlog').contains('likes').eq(initialLikes + 1)
     })
   })
 })

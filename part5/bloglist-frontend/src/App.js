@@ -71,8 +71,8 @@ const App = () => {
   }
 
   const updateLikes = async blogToUpdate => {
-    const updatedBlog = await blogService.addLike(blogToUpdate)
-    sortBlogsByLikes(blogs.map(blog => blog.id === blogToUpdate.id ? { ...blog, likes: updatedBlog.likes } : blog))
+    sortBlogsByLikes(blogs.map(blog => blog.id === blogToUpdate.id ? { ...blog, likes: blogToUpdate.likes + 1 } : blog))
+    await blogService.addLike(blogToUpdate)
   }
 
   const removeBlog = async blogToRemove => {
