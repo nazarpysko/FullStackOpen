@@ -55,36 +55,48 @@ describe('Blog app', function() {
       cy.contains('Robert Laszczak').should('exist')
     })
 
-    it('User can like a blog', function() {
-      const blog = {
-        title: 'The Go libraries that never failed us: 22 libraries you need to know',
-        author: 'Robert Laszczak',
-        url: 'https://threedots.tech/post/list-of-recommended-libraries/'
-      }
-
-      cy.createBlog(blog)
-
-      cy.contains('button', 'view').click()
-      cy.contains(blog.title).get('.info').as('infoInitialBlog')
-      const initialLikes = cy.get('@infoInitialBlog').contains('likes').then(likesButton => {
-        return likesButton.text().split(' ')[1]
+    describe('A blog is created by user', function() {
+      beforeEach(function() {
+        cy.login({ username: 'mluukkai', password: 'salainen' })
+        cy.createBlog({
+          title: 'The Go libraries that never failed us: 22 libraries you need to know',
+          author: 'Robert Laszczak',
+          url: 'https://threedots.tech/post/list-of-recommended-libraries/'
+        })
       })
 
-      cy.get('@infoInitialBlog').contains('button', 'like').click()
-      cy.get('@infoInitialBlog').contains('likes').eq(initialLikes + 1)
-    })
+      it('User can like a blog', function() {
+        cy.contains('button', 'view').click()
+        cy.contains('Robert Laszczak').get('.info').as('infoInitialBlog')
+        const initialLikes = cy.get('@infoInitialBlog').contains('likes').then(likesButton => {
+          return likesButton.text().split(' ')[1]
+        })
 
-    it.only('User can delete his own blog', function() {
-      const blog = {
-        title: 'The Go libraries that never failed us: 22 libraries you need to know',
-        author: 'Robert Laszczak',
-        url: 'https://threedots.tech/post/list-of-recommended-libraries/'
-      }
+        console.log(initialLikes)
+        cy.get('@infoInitialBlog').contains('button', 'like').click()
+        cy.get('@infoInitialBlog').contains('likes').should('have.text', 'likes 1')
+      })
 
-      cy.createBlog(blog)
-      cy.contains('button', 'view').click()
-      cy.contains('button', 'remove').click()
-      cy.contains(blog.title).should('not.exist')
+      it('User can delete his own blog', function() {
+        cy.contains('button', 'view').click()
+        cy.contains('button', 'remove').click()
+        cy.contains('Robert Laszczak').should('not.exist')
+      })
+
+      it.only('Other users but the creator do not see the delete button', function() {
+        cy.contains('button', 'logout').click()
+
+        const user = {
+          name: 'Other user',
+          username: 'testUser',
+          password: 'password'
+        }
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+        cy.login({ username: user.username, password: user.password })
+
+        cy.get('.blog').contains('button', 'view').click().get('.info').as('blogInfo')
+        cy.get('@blogInfo').contains('button', 'remove').should('not.exist')
+      })
     })
   })
 })
