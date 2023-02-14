@@ -55,7 +55,7 @@ describe('Blog app', function() {
       cy.contains('Robert Laszczak').should('exist')
     })
 
-    it('User can like a blog', async function() {
+    it('User can like a blog', function() {
       const blog = {
         title: 'The Go libraries that never failed us: 22 libraries you need to know',
         author: 'Robert Laszczak',
@@ -72,6 +72,19 @@ describe('Blog app', function() {
 
       cy.get('@infoInitialBlog').contains('button', 'like').click()
       cy.get('@infoInitialBlog').contains('likes').eq(initialLikes + 1)
+    })
+
+    it.only('User can delete his own blog', function() {
+      const blog = {
+        title: 'The Go libraries that never failed us: 22 libraries you need to know',
+        author: 'Robert Laszczak',
+        url: 'https://threedots.tech/post/list-of-recommended-libraries/'
+      }
+
+      cy.createBlog(blog)
+      cy.contains('button', 'view').click()
+      cy.contains('button', 'remove').click()
+      cy.contains(blog.title).should('not.exist')
     })
   })
 })
