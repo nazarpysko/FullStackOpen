@@ -19,7 +19,23 @@ describe('anecdote reducer', () => {
 
         const newState = anecdoteReducer(state, action)
         expect(newState).toHaveLength(state.length)
-        console.log(newState[0]);
         expect(newState[0].votes).toEqual(state[0].votes + 1)
+    })
+
+    test('Can add an anecdote', () => {
+        deepFreeze(initialState)
+
+        const action = {
+            type: 'NEW_ANECDOTE',
+            payload: {
+                anecdote: 'Hello world!'
+            }
+        }
+
+        const newState = anecdoteReducer(initialState, action)
+        expect(newState).toHaveLength(initialState.length + 1)
+        
+        const isFound = newState.some(element => element.content === action.payload.anecdote)
+        expect(isFound).toBe(true)
     })
 })
