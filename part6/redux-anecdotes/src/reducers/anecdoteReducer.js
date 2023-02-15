@@ -8,6 +8,10 @@ const asObject = (anecdote) => {
   }
 }
 
+const sortAnecdotes = anecdotes => {
+  return anecdotes.sort((a, b) => b.votes - a.votes)
+}
+
 export const getInitialState = () => {
   const anecdotesAtStart = [
     'If it hurts, do it more often',
@@ -18,7 +22,25 @@ export const getInitialState = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
   ]
   
-  return anecdotesAtStart.map(asObject)  
+  return sortAnecdotes(anecdotesAtStart.map(asObject))
+}
+
+export const vote = (id) => {
+  return {
+    type: 'VOTE',
+    payload: {
+      id: id
+    }
+  }
+}
+
+export const createAnecdote = anecdote => {
+  return {
+    type: 'NEW_ANECDOTE',
+    payload: {
+      anecdote: anecdote
+    }
+  }
 }
 
 const reducer = (state = getInitialState(), action) => {
@@ -28,11 +50,11 @@ const reducer = (state = getInitialState(), action) => {
   switch(action.type) {
     case 'VOTE':
       const id = action.payload.id
-      return state.map(anecdote => anecdote.id === id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote)
+      return sortAnecdotes(state.map(anecdote => anecdote.id === id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote))
 
     case 'NEW_ANECDOTE':
       const anecdote = action.payload.anecdote
-      return state.concat(asObject(anecdote))
+      return sortAnecdotes(state.concat(asObject(anecdote)))
 
     default:
       return state
