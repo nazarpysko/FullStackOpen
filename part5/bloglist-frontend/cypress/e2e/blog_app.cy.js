@@ -83,7 +83,7 @@ describe('Blog app', function() {
         cy.contains('Robert Laszczak').should('not.exist')
       })
 
-      it.only('Other users but the creator do not see the delete button', function() {
+      it('Other users but the creator do not see the delete button', function() {
         cy.contains('button', 'logout').click()
 
         const user = {
@@ -96,6 +96,16 @@ describe('Blog app', function() {
 
         cy.get('.blog').contains('button', 'view').click().get('.info').as('blogInfo')
         cy.get('@blogInfo').contains('button', 'remove').should('not.exist')
+      })
+
+      it.only('Blogs are ordered according to likes with the blog with the most likes being first', function() {
+        cy.createBlog({ title: 'most liked blog', author: 'random', url: 'example.com', likes: 3 })
+        cy.createBlog({ title: 'second most liked blog', author: 'random', url: 'example.com', likes: 2 })
+        cy.createBlog({ title: 'third most liked blog', author: 'random', url: 'example.com', likes: 1 })
+
+        cy.get('.blog').eq(0).should('contain', 'most liked blog')
+        cy.get('.blog').eq(1).should('contain', 'second most liked blog')
+        cy.get('.blog').eq(2).should('contain', 'third most liked blog')
       })
     })
   })

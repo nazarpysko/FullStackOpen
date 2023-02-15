@@ -20,7 +20,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   const sortBlogsByLikes = blogs => {
-    setBlogs(blogs.sort((a, b) => (a.likes > b.likes ? 1 : -1)))
+    setBlogs(blogs.sort((a, b) => (a.likes > b.likes ? -1 : 1)))
   }
 
   useEffect(() => {
