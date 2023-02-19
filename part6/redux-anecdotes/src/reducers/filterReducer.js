@@ -7,7 +7,7 @@ const filterSlice = createSlice({
     initialState,
     reducers: {
         filterChange(state, action) {
-            return action.payload === '' ? 'ALL' : action.payload.toLowerCase()
+            return action.payload.toLowerCase()
         }
     }
 })
