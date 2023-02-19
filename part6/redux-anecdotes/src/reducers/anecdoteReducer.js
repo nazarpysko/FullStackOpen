@@ -43,7 +43,7 @@ export const createAnecdote = anecdote => {
   }
 }
 
-const reducer = (state = getInitialState(), action) => {
+const anecdoteReducer = (state = getInitialState(), action) => {
   console.log('state now: ', state)
   console.log('action', action)
 
@@ -61,4 +61,4 @@ const reducer = (state = getInitialState(), action) => {
   }
 }
 
-export default reducer
+export default anecdoteReducer
