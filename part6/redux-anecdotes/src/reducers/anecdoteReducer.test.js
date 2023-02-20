@@ -10,10 +10,9 @@ describe('anecdote reducer', () => {
         deepFreeze(state)
 
         const action = {
-            type: 'VOTE',
-            payload: {
-                id: initialState[0].id
-            }
+            type: 'anecdotes/vote',
+            payload: initialState[0].id
+            
         }
 
         const newState = anecdoteReducer(state, action)
@@ -25,16 +24,14 @@ describe('anecdote reducer', () => {
         deepFreeze(initialState)
 
         const action = {
-            type: 'NEW_ANECDOTE',
-            payload: {
-                anecdote: 'Hello world!'
-            }
+            type: 'anecdotes/createAnecdote',
+            payload: 'Hello world!'
         }
 
         const newState = anecdoteReducer(initialState, action)
         expect(newState).toHaveLength(initialState.length + 1)
         
-        const isFound = newState.some(element => element.content === action.payload.anecdote)
+        const isFound = newState.some(element => element.content === action.payload)
         expect(isFound).toBe(true)
     })
 })
