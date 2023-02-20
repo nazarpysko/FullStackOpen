@@ -12,7 +12,6 @@ describe('anecdote reducer', () => {
         const action = {
             type: 'anecdotes/vote',
             payload: initialState[0].id
-            
         }
 
         const newState = anecdoteReducer(state, action)
