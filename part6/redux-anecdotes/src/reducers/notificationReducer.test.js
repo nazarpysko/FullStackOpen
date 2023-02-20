@@ -16,4 +16,18 @@ describe('notification reducer', () => {
         expect(newState).toBeTruthy()
         expect(newState).toEqual(action.payload)
     })
+
+    test('notification is cleared', () => {
+        const state = 'Hello world!'
+        deepFreeze(state)
+
+        const action = {
+            type: 'notification/clearNotification',
+            payload: ''
+        }
+
+        const newState = notificationReducer(state, action)
+        expect(newState).toBeFalsy()
+        expect(newState).toEqual('')
+    })
 })
