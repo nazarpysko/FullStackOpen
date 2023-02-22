@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { asObject } from '../reducers/anecdoteReducer'
 
 const baseUrl = 'http://localhost:3001/anecdotes'
 
@@ -7,5 +8,10 @@ const getAll = async () => {
   return response.data
 }
 
+const createNew = async anecdote => {
+  const response = await axios.post(baseUrl, asObject(anecdote))
+  return response.data
+}
+
 // eslint-disable-next-line
-export default { getAll }
+export default { getAll, createNew }
