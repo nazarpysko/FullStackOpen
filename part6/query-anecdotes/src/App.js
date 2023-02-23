@@ -6,7 +6,6 @@ import Notification from './components/Notification'
 
 
 const App = () => {
-
   const handleVote = (anecdote) => {
     console.log('vote')
   }
@@ -14,7 +13,7 @@ const App = () => {
   const result = useQuery(
     'anecdotes', getAnecdotes,
     {
-      retry: 1
+      retry: false
     }
   )
 
@@ -35,6 +34,8 @@ const App = () => {
       <Notification />
       <AnecdoteForm />
     
+      <br />
+
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
