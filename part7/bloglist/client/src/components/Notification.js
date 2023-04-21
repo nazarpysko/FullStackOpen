@@ -1,7 +1,7 @@
 const Notification = ({ msg }) => {
   let notificationStyle = {}
 
-  if (msg === null) {
+  if (msg === '') {
     return null
   } else if (msg.includes('wrong') || msg.includes('empty')) {
     notificationStyle.color = 'red'
