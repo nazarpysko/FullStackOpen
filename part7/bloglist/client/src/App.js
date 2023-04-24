@@ -9,8 +9,9 @@ import blogService from './services/blogs';
 import loginService from './services/login';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { clearNotificationMessage, setNotificationMessage } from './reducers/notificationReducer'
+import { clearNotificationMessage, setNotificationMessage } from './reducers/notificationReducer';
 import { setBlogs } from './reducers/blogsReducer';
+import { login, logout } from './reducers/userReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const App = () => {
   const blogs = useSelector(state => state.blogs);
   const notificationMsg = useSelector(state => state.notification);
 
-  const [user, setUser] = useState(null);
+  const user = useSelector(state => state.user);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -36,10 +37,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON);
-      setUser(loggedUser);
+      dispatch(login(loggedUser));
       blogService.setToken(loggedUser.token);
     }
-  }, []);
+  }, [dispatch]);
 
   const showNotification = msg => {
     dispatch(setNotificationMessage(msg));
@@ -54,7 +55,7 @@ const App = () => {
       window.localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
 
       blogService.setToken(loggedUser.token);
-      setUser(loggedUser);
+      dispatch(login(loggedUser));
       setUsername('');
       setPassword('');
     } catch (exception) {
@@ -120,8 +121,7 @@ const App = () => {
             />
           </div>
           <button id="login-button" type="submit">
-            {' '}
-            login{' '}
+            login
           </button>
         </form>
       </div>
@@ -134,7 +134,7 @@ const App = () => {
         {user.name} logged in{' '}
         <button
           onClick={() => {
-            setUser(null);
+            dispatch(logout());
             window.localStorage.clear();
           }}>
           {' '}
