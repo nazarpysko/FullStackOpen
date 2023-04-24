@@ -24,9 +24,4 @@ export const clearNotificationMessage = () => {
   };
 };
 
-export const showNotification = message => {
-  setNotificationMessage(message);
-  setTimeout(clearNotificationMessage(), 3000);
-};
-
 export default notificationReducer;

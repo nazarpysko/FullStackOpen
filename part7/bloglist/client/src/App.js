@@ -10,9 +10,13 @@ import loginService from './services/login';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { clearNotificationMessage, setNotificationMessage } from './reducers/notificationReducer'
+import { setBlogs } from './reducers/blogsReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const dispatch = useDispatch();
+
+  const blogs = useSelector(state => state.blogs);
+  const notificationMsg = useSelector(state => state.notification);
 
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
@@ -20,16 +24,13 @@ const App = () => {
 
   const blogFormRef = useRef();
 
-  const dispatch = useDispatch();
-  const notificationMsg = useSelector(state => state.notification);
-
   const sortBlogsByLikes = blogs => {
-    setBlogs(blogs.sort((a, b) => (a.likes > b.likes ? -1 : 1)));
+    dispatch(setBlogs(blogs.sort((a, b) => (a.likes > b.likes ? -1 : 1))));
   };
 
   useEffect(() => {
-    blogService.getAll().then(blogs => sortBlogsByLikes(blogs));
-  }, []);
+    blogService.getAll().then(blogs => dispatch(setBlogs(blogs)));
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
