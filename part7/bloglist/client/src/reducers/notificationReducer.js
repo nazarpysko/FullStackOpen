@@ -1,4 +1,4 @@
-const initialState = ''
+const initialState = '';
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -11,16 +11,23 @@ const notificationReducer = (state = initialState, action) => {
   }
 };
 
-export const setNotificationMessage = message => {
+const setNotificationMessage = message => {
   return {
     type: 'SET',
     message,
   };
 };
 
-export const clearNotificationMessage = () => {
+const clearNotificationMessage = () => {
   return {
     type: 'CLEAR',
+  };
+};
+
+export const showNotification = message => {
+  return async dispatch => {
+    dispatch(setNotificationMessage(message));
+    setTimeout(() => dispatch(clearNotificationMessage()), 3000);
   };
 };
 

@@ -1,3 +1,5 @@
+import blogService from "../services/blogs";
+
 const initialState = [];
 
 const blogsReducer = (state = initialState, action) => {
@@ -27,6 +29,13 @@ export const setBlogs = blogs => {
       type: 'SET_BLOGS',
       blogs,
     };
+}
+
+export const initializeBlogs = () => {
+    return async dispatch => {
+        const blogs = await blogService.getAll()
+        dispatch(setBlogs(blogs))
+    }
 }
 
 export default blogsReducer;
