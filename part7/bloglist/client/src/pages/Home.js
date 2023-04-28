@@ -12,11 +12,10 @@ import Togglable from '../components/Togglable';
 
 const Home = () => {
   const dispatch = useDispatch();
-
-  const blogs = useSelector(state => state.blogs);
-
+  
   const user = useSelector(state => state.user);
-
+  const blogs = useSelector(state => state.blogs);
+  
   const blogFormRef = useRef();
 
   const sortBlogsByLikes = blogs => {
@@ -28,10 +27,9 @@ const Home = () => {
 
     try {
       const newBlogAdded = await blogService.create(newBlog);
-
       const updatedBlogs = await blogService.getAll();
+      
       sortBlogsByLikes(updatedBlogs);
-
       dispatch(showNotification(`a new blog ${newBlogAdded.title} by ${newBlogAdded.author} added`));
     } catch (exception) {
       dispatch(showNotification('empty fields of new blog'));
@@ -54,7 +52,6 @@ const Home = () => {
 
   return (
     <div>
-      <br />
       <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>

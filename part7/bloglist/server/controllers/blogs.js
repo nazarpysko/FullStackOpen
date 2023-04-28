@@ -52,7 +52,8 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
-    if (!isValidObjectId(request.params.id)) {
+    const blogId = request.params.id
+    if (!isValidObjectId(blogId)) {
         return response.status(400).json({
             error: 'malformed id'
         })
@@ -65,14 +66,23 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
         })
     }
 
-    const blogToDelete = await Blog.findById(request.params.id)
+    const blogToDelete = await Blog.findById(blogId)
+    const userId = blogToDelete.user.toString();
     if (!blogToDelete) {
         response.status(404).end()
-    } else if (blogToDelete.user.toString() !== decodedToken.id) {
+    } else if (userId !== decodedToken.id) {
         return response.status(401).end()
     }  
 
-    await Blog.findByIdAndRemove(request.params.id)
+    // Delete from blogs collection
+    await Blog.findByIdAndRemove(blogId)
+
+    // Update user blogs field
+    const user = await User.findById(userId)
+    user.blogs = user.blogs.filter(blog => blog._id.toString() !== blogId)
+    await User.findByIdAndUpdate(userId, user)
+
+    // Set response successful status code
     response.status(204).end()
 })
 
