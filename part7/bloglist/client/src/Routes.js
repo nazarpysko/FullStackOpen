@@ -1,9 +1,10 @@
-import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
-import Users from './pages/UsersList';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, Routes } from 'react-router-dom';
+import Notification from './components/Notification';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Notification from './components/Notification';
-import { useDispatch, useSelector } from 'react-redux';
+import UserDetails from './pages/UserDetails';
+import Users from './pages/UsersList';
 import { logout } from './reducers/userReducer';
 
 const AppRoutes = () => {
@@ -12,8 +13,8 @@ const AppRoutes = () => {
   const user = useSelector(state => state.user);
 
   return (
-    <Router>
-      <div style={{marginBottom: '2em'}}>
+    <div>
+      <div style={{ marginBottom: '2em' }}>
         <h2>blogs</h2>
         <Notification msg={notificationMsg} />
         {user.name} logged in{' '}
@@ -27,10 +28,11 @@ const AppRoutes = () => {
       </div>
       <Routes>
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<UserDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
       </Routes>
-    </Router>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import express, { application, request } from 'express'
 let usersRouter = express.Router()
 
 usersRouter.get('/', async (request, response) => {
-    const usersFound = await User.find({})
+    const usersFound = await User.find({}).populate('blogs')
     response.json(usersFound)
 })
 

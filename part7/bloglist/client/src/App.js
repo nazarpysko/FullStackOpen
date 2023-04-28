@@ -8,6 +8,7 @@ import Login from './pages/Login';
 
 import AppRoutes from './Routes';
 import { initializeBlogs } from './reducers/blogsReducer';
+import { initializeUsers } from './reducers/usersReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,8 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(initializeBlogs())
+    dispatch(initializeBlogs());
+    dispatch(initializeUsers());
   }, [dispatch]);
 
   if (user === null) {
