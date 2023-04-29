@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import UserDetails from './pages/UserDetails';
 import Users from './pages/UsersList';
+import BlogDetails from './pages/BlogDetails';
 import { logout } from './reducers/userReducer';
 
 const AppRoutes = () => {
@@ -31,6 +32,8 @@ const AppRoutes = () => {
         <Route path="/users/:id" element={<UserDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
+        <Route path="/blogs" element={<Home />} />
+        <Route path="/blogs/:id" element={<BlogDetails />} />
       </Routes>
     </div>
   );

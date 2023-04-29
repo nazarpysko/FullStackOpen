@@ -36,19 +36,12 @@ const Home = () => {
     }
   };
 
-  const updateLikes = async blogToUpdate => {
-    sortBlogsByLikes(
-      blogs.map(blog => (blog.id === blogToUpdate.id ? { ...blog, likes: blogToUpdate.likes + 1 } : blog))
-    );
-    await blogService.addLike(blogToUpdate);
-  };
+  // const removeBlog = async blogToRemove => {
+  //   await blogService.remove(blogToRemove);
 
-  const removeBlog = async blogToRemove => {
-    await blogService.remove(blogToRemove);
-
-    sortBlogsByLikes(blogs.filter(blog => blog.id !== blogToRemove.id));
-    dispatch(showNotification('blog removed'));
-  };
+  //   sortBlogsByLikes(blogs.filter(blog => blog.id !== blogToRemove.id));
+  //   dispatch(showNotification('blog removed'));
+  // };
 
   return (
     <div>
@@ -56,7 +49,7 @@ const Home = () => {
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog => (
-        <Blog key={blog.id} user={user} blog={blog} updateLikes={updateLikes} removeBlog={removeBlog} />
+        <Blog key={blog.id} user={user} blog={blog} />
       ))}
     </div>
   );
