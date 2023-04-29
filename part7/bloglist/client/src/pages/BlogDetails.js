@@ -25,6 +25,8 @@ const BlogDetails = () => {
   };
 
   const removeBlog = async blogToRemove => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return;
+    
     await blogService.remove(blogToRemove);
     navigate('/');
     dispatch(setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id)));

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import Notification from './components/Notification';
-import Home from './pages/Home';
+import BlogsList from './pages/BlogsList';
 import Login from './pages/Login';
 import UserDetails from './pages/UserDetails';
 import Users from './pages/UsersList';
@@ -15,9 +15,13 @@ const AppRoutes = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: '2em' }}>
-        <h2>blogs</h2>
-        <Notification msg={notificationMsg} />
+      <nav style={{ backgroundColor: 'grey', 'padding': '0.5em' }}>
+        <Link style={{ marginRight: '0.5em' }} to={'/blogs'}>
+          blogs
+        </Link>
+        <Link style={{ marginRight: '0.5em' }} to={'/users'}>
+          users
+        </Link>
         {user.name} logged in{' '}
         <button
           onClick={() => {
@@ -26,13 +30,14 @@ const AppRoutes = () => {
           }}>
           logout
         </button>
-      </div>
+      </nav>
+      <Notification msg={notificationMsg} />
       <Routes>
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<UserDetails />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/blogs" element={<Home />} />
+        <Route path="/" element={<BlogsList />} />
+        <Route path="/blogs" element={<BlogsList />} />
         <Route path="/blogs/:id" element={<BlogDetails />} />
       </Routes>
     </div>

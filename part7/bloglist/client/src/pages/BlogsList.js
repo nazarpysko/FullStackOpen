@@ -10,12 +10,12 @@ import Blog from '../components/Blog';
 import BlogForm from '../components/BlogForm';
 import Togglable from '../components/Togglable';
 
-const Home = () => {
+const BlogsList = () => {
   const dispatch = useDispatch();
-  
+
   const user = useSelector(state => state.user);
   const blogs = useSelector(state => state.blogs);
-  
+
   const blogFormRef = useRef();
 
   const sortBlogsByLikes = blogs => {
@@ -28,7 +28,7 @@ const Home = () => {
     try {
       const newBlogAdded = await blogService.create(newBlog);
       const updatedBlogs = await blogService.getAll();
-      
+
       sortBlogsByLikes(updatedBlogs);
       dispatch(showNotification(`a new blog ${newBlogAdded.title} by ${newBlogAdded.author} added`));
     } catch (exception) {
@@ -36,15 +36,9 @@ const Home = () => {
     }
   };
 
-  // const removeBlog = async blogToRemove => {
-  //   await blogService.remove(blogToRemove);
-
-  //   sortBlogsByLikes(blogs.filter(blog => blog.id !== blogToRemove.id));
-  //   dispatch(showNotification('blog removed'));
-  // };
-
   return (
     <div>
+      <h1>blogs</h1>
       <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
@@ -55,4 +49,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default BlogsList;
