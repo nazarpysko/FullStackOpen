@@ -26,7 +26,7 @@ const BlogDetails = () => {
 
   const removeBlog = async blogToRemove => {
     if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return;
-    
+
     await blogService.remove(blogToRemove);
     navigate('/');
     dispatch(setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id)));
@@ -43,6 +43,13 @@ const BlogDetails = () => {
       </p>
       <p>added by {blog.user.name}</p>
       {user.username === blog.user.username ? <button onClick={() => removeBlog(blog)}>remove</button> : null}
+
+      <h2>comments</h2>
+      { !blog.comments || !blog.comments.length 
+        ? 'no comments :(' 
+        : <ul>
+            { blog.comments.map(comment => <li key={comment}>{comment}</li>) }
+          </ul> }
     </div>
   );
 };
