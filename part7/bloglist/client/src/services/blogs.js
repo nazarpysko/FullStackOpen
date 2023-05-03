@@ -32,5 +32,10 @@ const addLike = async blog => {
   return response.data
 }
 
+const comment = async (blogId, comment) => {
+  const response = await axios.post(`${baseUrl}/${blogId}/comments`, {comment: comment}, setHeaders())
+  return response.data
+}
+
 // eslint-disable-next-line
-export default { setToken, getAll, create, remove, addLike }
+export default { setToken, getAll, create, remove, addLike, comment }

@@ -1,10 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { setBlogs } from '../reducers/blogsReducer';
+import { commentBlog, setBlogs } from '../reducers/blogsReducer';
 import blogService from '../services/blogs';
 import { showNotification } from '../reducers/notificationReducer';
+import { useState } from 'react';
 
 const BlogDetails = () => {
+  const [newComment, setNewComment] = useState('')
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -32,6 +35,13 @@ const BlogDetails = () => {
     dispatch(setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id)));
     dispatch(showNotification('blog removed'));
   };
+
+  const addComment = async event => {
+    event.preventDefault();
+    await blogService.comment(blog.id, newComment)
+    dispatch(commentBlog(blog.id, newComment))
+    setNewComment('')
+  }
   
   if (!blog) return null;
   return (
@@ -45,11 +55,19 @@ const BlogDetails = () => {
       {user.username === blog.user.username ? <button onClick={() => removeBlog(blog)}>remove</button> : null}
 
       <h2>comments</h2>
-      { !blog.comments || !blog.comments.length 
-        ? 'no comments :(' 
-        : <ul>
-            { blog.comments.map(comment => <li key={comment}>{comment}</li>) }
-          </ul> }
+      <form onSubmit={addComment}>
+        <input type="text" value={newComment} onChange={({ target }) => setNewComment(target.value)}></input>
+        <button type="submit">add comment</button>
+      </form>
+      {!blog.comments || !blog.comments.length ? (
+        'no comments :('
+      ) : (
+        <ul>
+          {blog.comments.map((comment, i) => (
+            <li key={comment + i}>{comment}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
