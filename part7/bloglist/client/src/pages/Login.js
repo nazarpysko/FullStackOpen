@@ -8,6 +8,8 @@ import blogService from '../services/blogs';
 import { login } from '../reducers/userReducer';
 import { showNotification } from '../reducers/notificationReducer';
 
+import { TextField, Button, Alert } from '@mui/material';
+
 const Login = () => {
   const dispatch = useDispatch();
 
@@ -37,31 +39,28 @@ const Login = () => {
     <div>
       <h2>Log in to application</h2>
 
-      <Notification msg={notificationMsg} />
+      {notificationMsg && <Alert severity="error">{notificationMsg}</Alert>}
 
       <form id="login" onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <TextField
             id="username"
-            type="text"
+            label="username"
             value={username}
-            name="Username"
             onChange={({ target }) => setUsername(target.value)}
           />
           <br />
-          password
-          <input
+          <TextField
             id="password"
+            label="password"
             type="password"
             value={password}
-            name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id="login-button" type="submit">
+        <Button id="login-button" variant="contained" color="primary" type="submit">
           login
-        </button>
+        </Button>
       </form>
     </div>
   );

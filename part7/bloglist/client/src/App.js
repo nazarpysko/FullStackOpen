@@ -10,10 +10,12 @@ import AppRoutes from './Routes';
 import { initializeBlogs } from './reducers/blogsReducer';
 import { initializeUsers } from './reducers/usersReducer';
 
+import { Container } from '@mui/material';
+
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user);
-  
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
     if (loggedUserJSON) {
@@ -29,7 +31,11 @@ const App = () => {
   }, [dispatch]);
 
   if (user === null) {
-    return <Login />;
+    return (
+      <Container>
+        <Login />
+      </Container>
+    );
   } else {
     return <AppRoutes />;
   }
