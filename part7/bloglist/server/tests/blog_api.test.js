@@ -220,9 +220,38 @@ describe('when updating likes from a blog', () => {
 
     test('non valid id is passed', async () => {
         await api
-        .put('/api/blogs/abc123')
-        .send({ likes: 88 })
-        .expect(400)
+            .put('/api/blogs/abc123')
+            .send({ likes: 88 })
+            .expect(400)
+    })
+})
+
+describe('when commenting a blog', () => {
+    resetTestSuit();
+    
+    test('non valid id is passed', async () => {
+        await api
+            .post('/api/blogs/abc123/comments')
+            .send({comment: 'hello world!'})
+            .expect(400)
+    })
+
+    test('no comment is passed', async () => {
+        const firstBlogId = ((await blogsInDb())[0]).id;
+        await api.post(`/api/blogs/${firstBlogId}/comments`).send({}).expect(400);
+    })
+
+    test('comment is passed', async () => {
+        const comment = 'hello world!';
+        const firstBlogId = (await blogsInDb())[0].id;
+
+        const commentedBlog = await api
+            .post(`/api/blogs/${firstBlogId}/comments`)
+            .send({comment})
+            .expect(201);
+
+        expect(commentedBlog.body.comments).toHaveLength(1);
+        expect(commentedBlog.body.comments[0]).toBe(comment);
     })
 })
 

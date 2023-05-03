@@ -2,7 +2,7 @@ import middleware from '../utils/middleware.js'
 import jwt from 'jsonwebtoken'
 import { isValidObjectId } from 'mongoose'
 import Blog from '../models/blog.js'
-import express from 'express'
+import express, { response } from 'express'
 import User from '../models/user.js'
 
 let blogsRouter = express.Router()
@@ -49,6 +49,35 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     await user.save()
 
     response.status(201).json(savedBlog)
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+    const body = request.body
+    const blogId = request.params.id
+    if (!isValidObjectId(blogId)) {
+        return response.status(400).json({
+            error: 'malformed id',
+        });
+    }
+    
+    if(!body.comment) {
+        return response.status(400).json({
+            error: 'body content missing',
+        });  
+    }
+    
+    const blog = await Blog.findById(blogId)
+
+    if (!blog) {
+        return response.status(404).json({
+          error: 'not found blog',
+        });
+    }
+    
+    blog.comments.push(body.comment)
+    
+    const savedBlog = await blog.save()
+    return response.status(201).json(savedBlog);
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
